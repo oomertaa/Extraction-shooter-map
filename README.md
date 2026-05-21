@@ -1,0 +1,1 @@
+A project that hopes to simplify looting and general gameplay for difficult extraction shooter games
