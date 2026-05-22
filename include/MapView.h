@@ -13,7 +13,8 @@ class MapView {
     static constexpr float CLICK_THRESHOLD = 4.f;
 
 public:
-    MapView(sf::Vector2u texSize, unsigned winW, unsigned winH);
+    MapView(sf::Vector2u texSize, unsigned winW, unsigned winH,
+            unsigned leftPanel, unsigned rightPanel);
 
     // map coords (texture pixels) <-> screen coords (window pixels)
     sf::Vector2f mapToScreen(sf::Vector2f mapPos) const;
@@ -30,6 +31,14 @@ public:
     bool wasDragOnRelease() const;
 
 private:
+    void clampOffset();
+
+    float m_viewLeft{0.f};
+    float m_viewRight{0.f};
+    float m_viewTop{0.f};
+    float m_viewBottom{0.f};
+    sf::Vector2u m_texSize;
+
     static constexpr float ZOOM_STEP = 1.15f;
     static constexpr float MIN_SCALE = 0.1f;
     static constexpr float MAX_SCALE = 8.f;

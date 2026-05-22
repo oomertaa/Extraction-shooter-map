@@ -22,4 +22,7 @@ private:
     sf::Sprite                 m_mapSprite;
     std::optional<MapView>     m_mapView;
     Repository<MapMarker>      m_markers;
+
+    sf::RectangleShape         m_leftPanel;
+    sf::RectangleShape         m_rightPanel;
 };

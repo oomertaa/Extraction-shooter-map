@@ -1,6 +1,7 @@
 #include "App.h"
 #include "ConfigManager.h"
 #include "MarkerFactory.h"
+#include "RepoUtils.h"
 #include <stdexcept>
 #include <iostream>
 #include <iomanip>
@@ -17,10 +18,28 @@ App::App()
     if (!m_mapTexture.loadFromFile(cfg.mapPath()))
         throw std::runtime_error("Cannot load map texture: " + cfg.mapPath());
 
-    m_mapView.emplace(m_mapTexture.getSize(), cfg.windowWidth(), cfg.windowHeight());
+    m_mapView.emplace(m_mapTexture.getSize(), cfg.windowWidth(), cfg.windowHeight(),
+                      cfg.leftPanelWidth(), cfg.rightPanelWidth());
     m_mapSprite.setTexture(m_mapTexture);
 
     m_markers.load("data/markers.json", MarkerFactory::create);
+
+    float winH = static_cast<float>(cfg.windowHeight());
+    float leftW = static_cast<float>(cfg.leftPanelWidth());
+    float rightW = static_cast<float>(cfg.rightPanelWidth());
+    float winW = static_cast<float>(cfg.windowWidth());
+
+    m_leftPanel.setSize({leftW, winH});
+    m_leftPanel.setPosition(0.f, 0.f);
+    m_leftPanel.setFillColor(sf::Color(72, 40, 15));
+
+    m_rightPanel.setSize({rightW, winH});
+    m_rightPanel.setPosition(winW - rightW, 0.f);
+    m_rightPanel.setFillColor(sf::Color(72, 40, 15));
+
+    std::size_t lootCount = countIf<MapMarker>(m_markers,
+        [](const MapMarker& m){ return std::string(m.type()) == "loot"; });
+    std::cout << "Loaded " << lootCount << " loot markers\n";
 }
 
 void App::run()
@@ -46,7 +65,7 @@ void App::run()
             sf::Vertex(sf::Vector2f(mx, my + ARM), sf::Color::White)
         };
 
-        m_window.clear(sf::Color::Black);
+        m_window.clear(sf::Color(40, 40, 40));
         render();
         m_window.draw(hLine, 2, sf::Lines);
         m_window.draw(vLine, 2, sf::Lines);
@@ -98,8 +117,15 @@ void App::handleEvents()
             if (!m_mapView->wasDragOnRelease())
             {
                 sf::Vector2f mapPos = m_mapView->screenToMap(releasePos);
-                std::cout << "{ \"type\": \"loot\", \"x\": " << std::fixed << std::setprecision(0)
-                          << mapPos.x << ", \"y\": " << mapPos.y << ", \"kind\": \"\" }\n";
+                const MapMarker* hit = findFirst<MapMarker>(m_markers,
+                    [&](const MapMarker& m){ return m.contains(mapPos); });
+                if (hit)
+                    std::cout << "Clicked: " << hit->type()
+                              << " at (" << std::fixed << std::setprecision(0)
+                              << hit->position().x << ", " << hit->position().y << ")\n";
+                else
+                    std::cout << "{ \"x\": " << std::fixed << std::setprecision(0)
+                              << mapPos.x << ", \"y\": " << mapPos.y << " }\n";
             }
         }
     }
@@ -113,4 +139,6 @@ void App::render()
         if (!marker->visible()) continue;
         marker->draw(m_window, m_mapView->mapToScreen(marker->position()));
     }
+    m_window.draw(m_leftPanel);
+    m_window.draw(m_rightPanel);
 }

@@ -3,7 +3,7 @@
 #include "ExtractionMarker.h"
 #include "BossMarker.h"
 #include "LootContainer.h"
-#include <stdexcept>
+#include "AppExceptions.h"
 
 std::unique_ptr<MapMarker> MarkerFactory::create(const nlohmann::json& j)
 {
@@ -27,5 +27,5 @@ std::unique_ptr<MapMarker> MarkerFactory::create(const nlohmann::json& j)
         return std::make_unique<BossMarker>(
             sf::Vector2f{x, y}, j.value("description", ""));
     }
-    throw std::invalid_argument("Unknown marker type: " + type);
+    throw UnknownMarkerTypeException(type);
 }

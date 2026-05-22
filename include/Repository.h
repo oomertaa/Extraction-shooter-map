@@ -4,8 +4,8 @@
 #include <functional>
 #include <string>
 #include <fstream>
-#include <stdexcept>
 #include "nlohmann/json.hpp"
+#include "AppExceptions.h"
 
 template<typename T>
 class Repository {
@@ -16,7 +16,7 @@ public:
     {
         std::ifstream file(path);
         if (!file.is_open())
-            throw std::runtime_error("Cannot open: " + path);
+            throw MapLoadException(path);
         nlohmann::json arr = nlohmann::json::parse(file);
         m_items.clear();
         for (const auto& entry : arr)

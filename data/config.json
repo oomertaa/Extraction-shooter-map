@@ -3,5 +3,7 @@
         "width": 1600,
         "height": 900
     },
-    "mapPath": "data/map.png"
+    "mapPath": "data/map.png",
+    "leftPanelWidth": 251,
+    "rightPanelWidth": 251
 }

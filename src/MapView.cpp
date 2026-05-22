@@ -2,13 +2,23 @@
 #include <algorithm>
 #include <cmath>
 
-MapView::MapView(sf::Vector2u texSize, unsigned winW, unsigned winH)
+MapView::MapView(sf::Vector2u texSize, unsigned winW, unsigned winH,
+                 unsigned leftPanel, unsigned rightPanel)
+    : m_texSize(texSize)
 {
-    m_scale  = std::min(static_cast<float>(winW) / static_cast<float>(texSize.x),
-                        static_cast<float>(winH) / static_cast<float>(texSize.y));
+    m_viewLeft   = static_cast<float>(leftPanel);
+    m_viewRight  = static_cast<float>(winW - rightPanel);
+    m_viewTop    = 0.f;
+    m_viewBottom = static_cast<float>(winH);
+
+    float viewW = m_viewRight - m_viewLeft;
+    float viewH = m_viewBottom - m_viewTop;
+
+    m_scale  = std::min(viewW / static_cast<float>(texSize.x),
+                        viewH / static_cast<float>(texSize.y));
     m_offset = {
-        (static_cast<float>(winW) - texSize.x * m_scale) / 2.f,
-        (static_cast<float>(winH) - texSize.y * m_scale) / 2.f
+        m_viewLeft + (viewW - texSize.x * m_scale) / 2.f,
+        m_viewTop  + (viewH - texSize.y * m_scale) / 2.f
     };
 }
 
@@ -43,6 +53,7 @@ void MapView::onMouseMoved(sf::Vector2f screenPos)
     if (!m_dragging) return;
     sf::Vector2f delta = screenPos - m_dragAnchorMouse;
     m_offset = m_dragAnchorOffset + delta;
+    clampOffset();
     if (!m_wasDrag) {
         float dist = std::sqrt(delta.x * delta.x + delta.y * delta.y);
         if (dist > CLICK_THRESHOLD)
@@ -67,4 +78,23 @@ void MapView::onMouseWheelScrolled(sf::Vector2f mousePos, float delta)
     float applied  = newScale / m_scale;
     m_offset = mousePos + (m_offset - mousePos) * applied;
     m_scale  = newScale;
+    clampOffset();
+}
+
+void MapView::clampOffset()
+{
+    float mapW = m_texSize.x * m_scale;
+    float mapH = m_texSize.y * m_scale;
+    float viewW = m_viewRight - m_viewLeft;
+    float viewH = m_viewBottom - m_viewTop;
+
+    if (mapW <= viewW)
+        m_offset.x = m_viewLeft + (viewW - mapW) / 2.f;
+    else
+        m_offset.x = std::clamp(m_offset.x, m_viewRight - mapW, m_viewLeft);
+
+    if (mapH <= viewH)
+        m_offset.y = m_viewTop + (viewH - mapH) / 2.f;
+    else
+        m_offset.y = std::clamp(m_offset.y, m_viewBottom - mapH, m_viewTop);
 }
