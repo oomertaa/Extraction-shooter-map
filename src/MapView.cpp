@@ -59,3 +59,12 @@ bool MapView::wasDragOnRelease() const
 {
     return m_wasDrag;
 }
+
+void MapView::onMouseWheelScrolled(sf::Vector2f mousePos, float delta)
+{
+    float factor = (delta > 0.f) ? ZOOM_STEP : (1.f / ZOOM_STEP);
+    float newScale = std::clamp(m_scale * factor, MIN_SCALE, MAX_SCALE);
+    float applied  = newScale / m_scale;
+    m_offset = mousePos + (m_offset - mousePos) * applied;
+    m_scale  = newScale;
+}

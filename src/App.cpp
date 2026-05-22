@@ -84,6 +84,14 @@ void App::handleEvents()
                 static_cast<float>(event.mouseMove.y)
             });
 
+        if (event.type == sf::Event::MouseWheelScrolled &&
+            event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel)
+            m_mapView->onMouseWheelScrolled(
+                { static_cast<float>(event.mouseWheelScroll.x),
+                  static_cast<float>(event.mouseWheelScroll.y) },
+                event.mouseWheelScroll.delta
+            );
+
         if (event.type == sf::Event::MouseButtonReleased &&
             event.mouseButton.button == sf::Mouse::Left)
         {

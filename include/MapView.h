@@ -24,7 +24,13 @@ public:
     void onMousePressed(sf::Vector2f screenPos);
     void onMouseMoved(sf::Vector2f screenPos);
     void onMouseReleased(sf::Vector2f screenPos);
+    void onMouseWheelScrolled(sf::Vector2f mousePos, float delta);
 
     // true when press→release involved movement beyond click threshold
     bool wasDragOnRelease() const;
+
+private:
+    static constexpr float ZOOM_STEP = 1.15f;
+    static constexpr float MIN_SCALE = 0.1f;
+    static constexpr float MAX_SCALE = 8.f;
 };
