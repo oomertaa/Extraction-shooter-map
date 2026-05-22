@@ -2,18 +2,23 @@
 #include <iostream>
 #include <cmath>
 #include "MapView.h"
+#include "ConfigManager.h"
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(1600, 900), "Zero Dam - Map Reference");
+    auto& cfg = ConfigManager::instance();
+
+    sf::RenderWindow window(
+        sf::VideoMode(cfg.windowWidth(), cfg.windowHeight()),
+        "Zero Dam - Map Reference");
     window.setFramerateLimit(60);
     window.setMouseCursorVisible(false);
 
     sf::Texture mapTexture;
-    if (!mapTexture.loadFromFile("data/map.png"))
+    if (!mapTexture.loadFromFile(cfg.mapPath()))
         return 1;
 
-    MapView mapView(mapTexture.getSize(), 1600, 900);
+    MapView mapView(mapTexture.getSize(), cfg.windowWidth(), cfg.windowHeight());
 
     sf::Sprite mapSprite(mapTexture);
     mapView.applyToSprite(mapSprite);

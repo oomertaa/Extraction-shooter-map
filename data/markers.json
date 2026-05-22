@@ -1,0 +1,12 @@
+[
+  {
+    "type": "loot",
+    "x": 500,
+    "y": 400,
+    "containers": [
+      { "kind": "TravelBag" },
+      { "kind": "StorageBox" },
+      { "kind": "Safe", "notable": ["Keycard Blue", "M4A1 Suppressed"] }
+    ]
+  }
+]

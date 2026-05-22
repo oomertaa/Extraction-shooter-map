@@ -9,6 +9,8 @@ find_package(SFML 2.6 COMPONENTS graphics window system REQUIRED)
 add_executable(ZeroDamMap
     main.cpp
     src/MapView.cpp
+    src/ConfigManager.cpp
+    src/LootContainer.cpp
 )
 target_include_directories(ZeroDamMap PRIVATE include)
 target_compile_options(ZeroDamMap PRIVATE -Wall -Wextra -Wpedantic)
