@@ -12,6 +12,6 @@
     "kind": "Safe",
     "notable": ["Keycard Blue", "M4A1 Suppressed"]
   },
-  { "type": "boss", "x": 693, "y": 332, "description": "Always spawns" },
-  { "type": "extraction", "x": 189, "y": 551, "description": "Always open" }
+  { "type": "boss", "x": 693, "y": 332, "description": "careful..."},
+  { "type": "extraction", "x": 189, "y": 551, "description": "always open"}
 ]
