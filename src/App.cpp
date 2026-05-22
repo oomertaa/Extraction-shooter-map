@@ -37,6 +37,9 @@ App::App()
     m_rightPanel.setPosition(winW - rightW, 0.f);
     m_rightPanel.setFillColor(sf::Color(72, 40, 15));
 
+    if (!m_font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"))
+        throw std::runtime_error("Cannot load font");
+
     std::size_t lootCount = countIf<MapMarker>(m_markers,
         [](const MapMarker& m){ return std::string(m.type()) == "loot"; });
     std::cout << "Loaded " << lootCount << " loot markers\n";
@@ -117,15 +120,18 @@ void App::handleEvents()
             if (!m_mapView->wasDragOnRelease())
             {
                 sf::Vector2f mapPos = m_mapView->screenToMap(releasePos);
-                const MapMarker* hit = findFirst<MapMarker>(m_markers,
+                auto hit = findFirst<MapMarker>(m_markers,
                     [&](const MapMarker& m){ return m.contains(mapPos); });
-                if (hit)
+                if (hit) {
+                    m_selectedMarker = hit;
                     std::cout << "Clicked: " << hit->type()
                               << " at (" << std::fixed << std::setprecision(0)
                               << hit->position().x << ", " << hit->position().y << ")\n";
-                else
-                    std::cout << "{ \"x\": " << std::fixed << std::setprecision(0)
-                              << mapPos.x << ", \"y\": " << mapPos.y << " }\n";
+                } else {
+                    m_selectedMarker.reset();
+                    std::cout << "  { \"type\": \"loot\", \"x\": " << std::fixed << std::setprecision(0)
+                              << mapPos.x << ", \"y\": " << mapPos.y << ", \"kind\": \"\" },\n";
+                }
             }
         }
     }
@@ -141,4 +147,21 @@ void App::render()
     }
     m_window.draw(m_leftPanel);
     m_window.draw(m_rightPanel);
+
+    if (auto selected = m_selectedMarker.lock()) {
+        const float padding = 14.f;
+        float y = padding;
+        const auto lines = selected->info();
+        for (const auto& line : lines) {
+            sf::Text text;
+            text.setFont(m_font);
+            text.setString(line);
+            text.setCharacterSize(line == lines.front() ? 15u : 13u);
+            text.setFillColor(line == lines.front()
+                ? sf::Color::White : sf::Color(210, 195, 175));
+            text.setPosition(padding, y);
+            m_window.draw(text);
+            y += text.getLocalBounds().height + 6.f;
+        }
+    }
 }

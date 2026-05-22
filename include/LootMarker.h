@@ -11,6 +11,7 @@ public:
     const char* type() const override;
 
     const LootContainer& container() const;
+    std::vector<std::string> info() const override;
 
 private:
     LootContainer m_container;

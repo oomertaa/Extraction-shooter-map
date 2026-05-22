@@ -1,5 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <vector>
+#include <string>
 
 class MapMarker {
 public:
@@ -9,6 +11,7 @@ public:
     virtual void draw(sf::RenderWindow& window, sf::Vector2f screenPos) const = 0;
     virtual bool contains(sf::Vector2f mapPos) const = 0;
     virtual const char* type() const = 0;
+    virtual std::vector<std::string> info() const = 0;
 
     sf::Vector2f position() const;
     bool         visible()  const;

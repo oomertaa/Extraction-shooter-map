@@ -5,7 +5,7 @@
 #include "LootContainer.h"
 #include "AppExceptions.h"
 
-std::unique_ptr<MapMarker> MarkerFactory::create(const nlohmann::json& j)
+std::shared_ptr<MapMarker> MarkerFactory::create(const nlohmann::json& j)
 {
     const std::string type = j.at("type").get<std::string>();
     const float x = j.at("x").get<float>();
@@ -16,15 +16,15 @@ std::unique_ptr<MapMarker> MarkerFactory::create(const nlohmann::json& j)
         std::vector<std::string> notable;
         if (j.contains("notable"))
             notable = j["notable"].get<std::vector<std::string>>();
-        return std::make_unique<LootMarker>(
+        return std::make_shared<LootMarker>(
             sf::Vector2f{x, y}, LootContainer{kind, std::move(notable)});
     }
     if (type == "extraction") {
-        return std::make_unique<ExtractionMarker>(
+        return std::make_shared<ExtractionMarker>(
             sf::Vector2f{x, y}, j.value("description", ""));
     }
     if (type == "boss") {
-        return std::make_unique<BossMarker>(
+        return std::make_shared<BossMarker>(
             sf::Vector2f{x, y}, j.value("description", ""));
     }
     throw UnknownMarkerTypeException(type);

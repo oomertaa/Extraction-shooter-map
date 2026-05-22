@@ -10,7 +10,7 @@
 template<typename T>
 class Repository {
 public:
-    using Factory = std::function<std::unique_ptr<T>(const nlohmann::json&)>;
+    using Factory = std::function<std::shared_ptr<T>(const nlohmann::json&)>;
 
     void load(const std::string& path, Factory factory)
     {
@@ -23,9 +23,9 @@ public:
             m_items.push_back(factory(entry));
     }
 
-    const std::vector<std::unique_ptr<T>>& all() const { return m_items; }
+    const std::vector<std::shared_ptr<T>>& all() const { return m_items; }
     std::size_t size() const { return m_items.size(); }
 
 private:
-    std::vector<std::unique_ptr<T>> m_items;
+    std::vector<std::shared_ptr<T>> m_items;
 };

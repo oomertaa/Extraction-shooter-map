@@ -24,3 +24,19 @@ bool LootMarker::contains(sf::Vector2f mapPos) const
 const char* LootMarker::type() const { return "loot"; }
 
 const LootContainer& LootMarker::container() const { return m_container; }
+
+std::vector<std::string> LootMarker::info() const
+{
+    std::vector<std::string> lines;
+    lines.push_back("LOOT CONTAINER");
+    lines.push_back("Kind: " + containerKindToString(m_container.kind()));
+    if (m_container.isSafe())
+        lines.push_back("[ Safe ]");
+    if (!m_container.notableDrops().empty()) {
+        lines.push_back("");
+        lines.push_back("Notable drops:");
+        for (const auto& drop : m_container.notableDrops())
+            lines.push_back("  " + drop);
+    }
+    return lines;
+}

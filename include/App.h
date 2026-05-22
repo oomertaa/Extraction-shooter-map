@@ -4,6 +4,8 @@
 #include "MapView.h"
 #include "MapMarker.h"
 #include "Repository.h"
+#include <memory>
+#include <string>
 
 class App {
 public:
@@ -25,4 +27,6 @@ private:
 
     sf::RectangleShape         m_leftPanel;
     sf::RectangleShape         m_rightPanel;
+    sf::Font                   m_font;
+    std::weak_ptr<MapMarker>   m_selectedMarker;
 };

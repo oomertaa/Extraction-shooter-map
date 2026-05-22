@@ -11,6 +11,7 @@ public:
     const char* type() const override;
 
     const std::string& description() const;
+    std::vector<std::string> info() const override;
 
 private:
     std::string m_description;

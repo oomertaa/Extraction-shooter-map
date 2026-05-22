@@ -1,18 +1,19 @@
 #pragma once
 #include <functional>
+#include <memory>
 #include <cstddef>
 #include <type_traits>
 #include "Repository.h"
 #include "MapMarker.h"
 
 template<typename T>
-const T* findFirst(const Repository<T>& repo, std::function<bool(const T&)> pred)
+std::shared_ptr<T> findFirst(const Repository<T>& repo, std::function<bool(const T&)> pred)
 {
     for (const auto& item : repo.all()) {
         if constexpr (std::is_base_of_v<MapMarker, T>)
             if (!item->visible()) continue;
         if (pred(*item))
-            return item.get();
+            return item;
     }
     return nullptr;
 }

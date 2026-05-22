@@ -5,7 +5,7 @@
 
 class MarkerFactory {
 public:
-    static std::unique_ptr<MapMarker> create(const nlohmann::json& entry);
+    static std::shared_ptr<MapMarker> create(const nlohmann::json& entry);
 
     MarkerFactory()                              = delete;
     MarkerFactory(const MarkerFactory&)          = delete;
