@@ -23,12 +23,19 @@ int main()
     sf::Sprite mapSprite(mapTexture);
     mapView.applyToSprite(mapSprite);
 
-    const sf::Vector2f markerMapPos(500.f, 400.f);
-    const float        markerRadius = 12.f;
+    sf::Texture testTexture;
+    if (!testTexture.loadFromFile("data/test_sprite.png"))
+        return 1;
 
-    sf::CircleShape markerShape(markerRadius);
-    markerShape.setFillColor(sf::Color(220, 50, 50, 200));
-    markerShape.setOrigin(markerRadius, markerRadius);
+    // center origin so the sprite sits on top of the map coordinate
+    sf::Sprite testSprite(testTexture);
+    testSprite.setOrigin(testTexture.getSize().x / 2.f, testTexture.getSize().y / 2.f);
+
+    // two test positions matching markers.json
+    const std::vector<sf::Vector2f> markerPositions = {
+        {500.f, 400.f},
+        {600.f, 350.f}
+    };
 
     const float ARM = 10.f;
 
@@ -66,15 +73,6 @@ int main()
                     static_cast<float>(event.mouseButton.y)
                 );
                 mapView.onMouseReleased(releasePos);
-
-                if (!mapView.wasDragOnRelease())
-                {
-                    sf::Vector2f markerScreen = mapView.mapToScreen(markerMapPos);
-                    sf::Vector2f diff         = releasePos - markerScreen;
-                    float dist = std::sqrt(diff.x * diff.x + diff.y * diff.y);
-                    if (dist <= markerRadius)
-                        std::cout << "clicked\n";
-                }
             }
         }
 
@@ -83,7 +81,6 @@ int main()
         float        my = static_cast<float>(m.y);
 
         mapView.applyToSprite(mapSprite);
-        markerShape.setPosition(mapView.mapToScreen(markerMapPos));
 
         sf::Vertex hLine[] = {
             sf::Vertex(sf::Vector2f(mx - ARM, my), sf::Color::White),
@@ -96,7 +93,11 @@ int main()
 
         window.clear(sf::Color::Black);
         window.draw(mapSprite);
-        window.draw(markerShape);
+        for (const auto& pos : markerPositions)
+        {
+            testSprite.setPosition(mapView.mapToScreen(pos));
+            window.draw(testSprite);
+        }
         window.draw(hLine, 2, sf::Lines);
         window.draw(vLine, 2, sf::Lines);
         window.display();
