@@ -8,6 +8,7 @@ find_package(SFML 2.6 COMPONENTS graphics window system REQUIRED)
 
 add_executable(ZeroDamMap
     main.cpp
+    src/App.cpp
     src/MapView.cpp
     src/ConfigManager.cpp
     src/LootContainer.cpp
