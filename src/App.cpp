@@ -1,5 +1,6 @@
 #include "App.h"
 #include "ConfigManager.h"
+#include "MarkerFactory.h"
 #include <stdexcept>
 #include <iostream>
 #include <iomanip>
@@ -19,14 +20,7 @@ App::App()
     m_mapView.emplace(m_mapTexture.getSize(), cfg.windowWidth(), cfg.windowHeight());
     m_mapSprite.setTexture(m_mapTexture);
 
-    if (!m_markerTexture.loadFromFile("data/15px_loot_sprite.png"))
-        throw std::runtime_error("Cannot load marker texture");
-
-    m_markerSprite.setTexture(m_markerTexture);
-    m_markerSprite.setOrigin(m_markerTexture.getSize().x / 2.f,
-                             m_markerTexture.getSize().y / 2.f);
-
-    m_markerPositions = {{500.f, 400.f}, {600.f, 350.f}};
+    m_markers.load("data/markers.json", MarkerFactory::create);
 }
 
 void App::run()
@@ -114,9 +108,9 @@ void App::handleEvents()
 void App::render()
 {
     m_window.draw(m_mapSprite);
-    for (const auto& pos : m_markerPositions)
+    for (const auto& marker : m_markers.all())
     {
-        m_markerSprite.setPosition(m_mapView->mapToScreen(pos));
-        m_window.draw(m_markerSprite);
+        if (!marker->visible()) continue;
+        marker->draw(m_window, m_mapView->mapToScreen(marker->position()));
     }
 }

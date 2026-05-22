@@ -14,8 +14,7 @@ public:
 
 private:
     LootContainer m_container;
-    sf::Texture           m_texture;
-    mutable sf::Sprite    m_sprite;
 
-    static constexpr float HIT_RADIUS = 15.f;
+    static constexpr float HIT_RADIUS  = 15.f;
+    static constexpr float DRAW_RADIUS = 7.f;
 };

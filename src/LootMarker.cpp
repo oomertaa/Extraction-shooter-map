@@ -1,20 +1,18 @@
 #include "LootMarker.h"
-#include <stdexcept>
 
 LootMarker::LootMarker(sf::Vector2f position, LootContainer container)
     : MapMarker(position), m_container(std::move(container))
-{
-    if (!m_texture.loadFromFile("data/15px_loot_sprite.png"))
-        throw std::runtime_error("Cannot load loot sprite");
-    m_sprite.setTexture(m_texture);
-    auto size = m_texture.getSize();
-    m_sprite.setOrigin(size.x / 2.f, size.y / 2.f);
-}
+{}
 
 void LootMarker::draw(sf::RenderWindow& window, sf::Vector2f screenPos) const
 {
-    m_sprite.setPosition(screenPos);
-    window.draw(m_sprite);
+    sf::CircleShape shape(DRAW_RADIUS);
+    shape.setOrigin(DRAW_RADIUS, DRAW_RADIUS);
+    shape.setFillColor(sf::Color(255, 220, 0));
+    shape.setOutlineColor(sf::Color::White);
+    shape.setOutlineThickness(1.f);
+    shape.setPosition(screenPos);
+    window.draw(shape);
 }
 
 bool LootMarker::contains(sf::Vector2f mapPos) const
