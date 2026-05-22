@@ -1,6 +1,8 @@
 #include "App.h"
 #include "ConfigManager.h"
 #include <stdexcept>
+#include <iostream>
+#include <iomanip>
 
 App::App()
 {
@@ -84,10 +86,20 @@ void App::handleEvents()
 
         if (event.type == sf::Event::MouseButtonReleased &&
             event.mouseButton.button == sf::Mouse::Left)
-            m_mapView->onMouseReleased({
+        {
+            sf::Vector2f releasePos(
                 static_cast<float>(event.mouseButton.x),
                 static_cast<float>(event.mouseButton.y)
-            });
+            );
+            m_mapView->onMouseReleased(releasePos);
+
+            if (!m_mapView->wasDragOnRelease())
+            {
+                sf::Vector2f mapPos = m_mapView->screenToMap(releasePos);
+                std::cout << "{ \"type\": \"loot\", \"x\": " << std::fixed << std::setprecision(0)
+                          << mapPos.x << ", \"y\": " << mapPos.y << ", \"kind\": \"\" }\n";
+            }
+        }
     }
 }
 
