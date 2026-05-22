@@ -13,6 +13,9 @@ add_executable(ZeroDamMap
     src/ConfigManager.cpp
     src/LootContainer.cpp
     src/MapMarker.cpp
+    src/LootMarker.cpp
+    src/ExtractionMarker.cpp
+    src/BossMarker.cpp
 )
 target_include_directories(ZeroDamMap PRIVATE include)
 target_compile_options(ZeroDamMap PRIVATE -Wall -Wextra -Wpedantic)

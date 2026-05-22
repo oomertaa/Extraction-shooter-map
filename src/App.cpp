@@ -19,7 +19,7 @@ App::App()
     m_mapView.emplace(m_mapTexture.getSize(), cfg.windowWidth(), cfg.windowHeight());
     m_mapSprite.setTexture(m_mapTexture);
 
-    if (!m_markerTexture.loadFromFile("data/test_sprite.png"))
+    if (!m_markerTexture.loadFromFile("data/15px_loot_sprite.png"))
         throw std::runtime_error("Cannot load marker texture");
 
     m_markerSprite.setTexture(m_markerTexture);
