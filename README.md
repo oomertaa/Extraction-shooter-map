@@ -8,7 +8,7 @@ An interactive map viewer for extraction shooter games. Markers for bosses, extr
 `MarkerFactory::create()` reads the `type` field from each JSON entry and constructs the correct subclass (`BossMarker`, `ExtractionMarker`, or `LootMarker`). The caller only sees `shared_ptr<MapMarker>`.
 
 **Singleton** — `src/ConfigManager.cpp:8`
-`ConfigManager::instance()` provides a single point of access to window dimensions and asset paths loaded from config. Constructor is private; copy and move are deleted.
+`ConfigManager::instance()` provides a single point of access to window dimensions and asset paths loaded from config.
 
 ## Build instructions
 
