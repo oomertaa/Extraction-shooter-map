@@ -1,6 +1,5 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include <optional>
 #include "MapView.h"
 #include "MapMarker.h"
 #include "Repository.h"
@@ -22,7 +21,7 @@ private:
     sf::RenderWindow           m_window;
     sf::Texture                m_mapTexture;
     sf::Sprite                 m_mapSprite;
-    std::optional<MapView>     m_mapView;
+    std::unique_ptr<MapView>   m_mapView;
     Repository<MapMarker>      m_markers;
 
     sf::RectangleShape         m_leftPanel;

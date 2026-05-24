@@ -18,8 +18,8 @@ App::App()
     if (!m_mapTexture.loadFromFile(cfg.mapPath()))
         throw std::runtime_error("Cannot load map texture: " + cfg.mapPath());
 
-    m_mapView.emplace(m_mapTexture.getSize(), cfg.windowWidth(), cfg.windowHeight(),
-                      cfg.leftPanelWidth(), cfg.rightPanelWidth());
+    m_mapView = std::make_unique<MapView>(m_mapTexture.getSize(), cfg.windowWidth(), cfg.windowHeight(),
+                                          cfg.leftPanelWidth(), cfg.rightPanelWidth());
     m_mapSprite.setTexture(m_mapTexture);
 
     m_markers.load("data/markers.json", MarkerFactory::create);
