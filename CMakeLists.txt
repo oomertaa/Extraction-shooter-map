@@ -23,7 +23,7 @@ target_include_directories(ZeroDamMap PRIVATE include)
 target_compile_options(ZeroDamMap PRIVATE -Wall -Wextra -Wpedantic)
 target_link_libraries(ZeroDamMap sfml-graphics sfml-window sfml-system)
 
-add_custom_command(TARGET ZeroDamMap POST_BUILD
+add_custom_target(copy_data ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/data $<TARGET_FILE_DIR:ZeroDamMap>/data
+    ${CMAKE_SOURCE_DIR}/data ${CMAKE_BINARY_DIR}/data
 )
