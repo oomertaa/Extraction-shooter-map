@@ -145,7 +145,7 @@ void App::handleEvents()
                     } else {
                         m_selectedMarker.reset();
                         std::cout << "  { \"type\": \"loot\", \"x\": " << std::fixed << std::setprecision(0)
-                                  << mapPos.x << ", \"y\": " << mapPos.y << ", \"kind\": \"\" },\n";
+                                  << mapPos.x << ", \"y\": " << mapPos.y << ", \"kind\": \"StorageBox\" },\n";
                     }
                 }
             }
