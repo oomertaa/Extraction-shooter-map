@@ -78,11 +78,14 @@ void FilterPanel::drawCheckbox(sf::RenderWindow& window, sf::Vector2f pos, bool 
 
 void FilterPanel::drawTypeSection(sf::RenderWindow& window) const
 {
+    std::size_t activeTypes = 0;
+    for (const auto& t : m_typeToggles) if (t.on) ++activeTypes;
+
     sf::Text sec;
     sec.setFont(m_font);
     sec.setCharacterSize(12u);
     sec.setFillColor(sf::Color(160, 140, 110));
-    sec.setString("MARKER TYPES");
+    sec.setString("MARKER TYPES  " + std::to_string(activeTypes) + " / " + std::to_string(m_typeToggles.size()));
     sec.setPosition(m_x + PADDING, m_typeToggles[0].hitbox.top - SEC_H);
     window.draw(sec);
 
@@ -111,15 +114,18 @@ void FilterPanel::drawKindSection(sf::RenderWindow& window) const
     sep.setFillColor(sf::Color(110, 75, 40));
     window.draw(sep);
 
+    bool lootVisible = isTypeVisible("loot");
+
+    std::size_t activeKinds = 0;
+    for (const auto& k : m_kindToggles) if (k.on) ++activeKinds;
+
     sf::Text sec;
     sec.setFont(m_font);
     sec.setCharacterSize(12u);
     sec.setFillColor(sf::Color(160, 140, 110));
-    sec.setString("CONTAINERS");
+    sec.setString("CONTAINERS  " + std::to_string(activeKinds) + " / " + std::to_string(m_kindToggles.size()));
     sec.setPosition(m_x + PADDING, m_kindToggles[0].hitbox.top - SEC_H);
     window.draw(sec);
-
-    bool lootVisible = isTypeVisible("loot");
     for (const auto& k : m_kindToggles) {
         float bx = m_x + PADDING;
         float by = k.hitbox.top + (ROW_H - BOX_SIZE) / 2.f;
