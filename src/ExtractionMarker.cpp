@@ -24,6 +24,7 @@ bool ExtractionMarker::contains(sf::Vector2f mapPos) const
 const char* ExtractionMarker::type() const { return "extraction"; }
 
 const std::string& ExtractionMarker::description() const { return m_description; }
+float ExtractionMarker::drawRadius() const { return DRAW_RADIUS; }
 
 std::vector<std::string> ExtractionMarker::info() const
 {

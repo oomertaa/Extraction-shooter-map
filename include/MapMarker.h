@@ -12,6 +12,7 @@ public:
     virtual bool contains(sf::Vector2f mapPos) const = 0;
     virtual const char* type() const = 0;
     virtual std::vector<std::string> info() const = 0;
+    virtual float drawRadius() const = 0;
 
     sf::Vector2f position() const;
     bool         visible()  const;

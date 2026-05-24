@@ -12,6 +12,7 @@ public:
 
     const LootContainer& container() const;
     std::vector<std::string> info() const override;
+    float drawRadius() const override;
 
 private:
     LootContainer m_container;

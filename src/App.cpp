@@ -140,10 +140,22 @@ void App::handleEvents()
 void App::render()
 {
     m_window.draw(m_mapSprite);
+    auto selected = m_selectedMarker.lock();
     for (const auto& marker : m_markers.all())
     {
         if (!marker->visible()) continue;
-        marker->draw(m_window, m_mapView->mapToScreen(marker->position()));
+        sf::Vector2f screenPos = m_mapView->mapToScreen(marker->position());
+        if (selected && marker == selected) {
+            float r = marker->drawRadius() + 7.f;
+            sf::CircleShape ring(r);
+            ring.setOrigin(r, r);
+            ring.setFillColor(sf::Color(255, 255, 255, 50));
+            ring.setOutlineColor(sf::Color(255, 255, 255, 140));
+            ring.setOutlineThickness(2.f);
+            ring.setPosition(screenPos);
+            m_window.draw(ring);
+        }
+        marker->draw(m_window, screenPos);
     }
     m_window.draw(m_leftPanel);
     m_window.draw(m_rightPanel);

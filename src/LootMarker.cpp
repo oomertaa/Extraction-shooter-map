@@ -24,6 +24,7 @@ bool LootMarker::contains(sf::Vector2f mapPos) const
 const char* LootMarker::type() const { return "loot"; }
 
 const LootContainer& LootMarker::container() const { return m_container; }
+float LootMarker::drawRadius() const { return DRAW_RADIUS; }
 
 std::vector<std::string> LootMarker::info() const
 {

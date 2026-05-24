@@ -24,6 +24,7 @@ bool BossMarker::contains(sf::Vector2f mapPos) const
 const char* BossMarker::type() const { return "boss"; }
 
 const std::string& BossMarker::description() const { return m_description; }
+float BossMarker::drawRadius() const { return DRAW_RADIUS; }
 
 std::vector<std::string> BossMarker::info() const
 {
