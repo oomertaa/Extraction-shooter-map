@@ -3,6 +3,7 @@
 #include "MapView.h"
 #include "MapMarker.h"
 #include "Repository.h"
+#include "FilterPanel.h"
 #include <memory>
 #include <string>
 
@@ -24,8 +25,8 @@ private:
     std::unique_ptr<MapView>   m_mapView;
     Repository<MapMarker>      m_markers;
 
-    sf::RectangleShape         m_leftPanel;
-    sf::RectangleShape         m_rightPanel;
-    sf::Font                   m_font;
-    std::weak_ptr<MapMarker>   m_selectedMarker;
+    sf::RectangleShape             m_leftPanel;
+    sf::Font                       m_font;
+    std::unique_ptr<FilterPanel>   m_filterPanel;
+    std::weak_ptr<MapMarker>       m_selectedMarker;
 };

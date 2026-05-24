@@ -1,6 +1,7 @@
 #include "App.h"
 #include "ConfigManager.h"
 #include "MarkerFactory.h"
+#include "LootMarker.h"
 #include "RepoUtils.h"
 #include <stdexcept>
 #include <iostream>
@@ -33,12 +34,20 @@ App::App()
     m_leftPanel.setPosition(0.f, 0.f);
     m_leftPanel.setFillColor(sf::Color(72, 40, 15));
 
-    m_rightPanel.setSize({rightW, winH});
-    m_rightPanel.setPosition(winW - rightW, 0.f);
-    m_rightPanel.setFillColor(sf::Color(72, 40, 15));
-
     if (!m_font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"))
         throw std::runtime_error("Cannot load font");
+
+    m_filterPanel = std::make_unique<FilterPanel>(
+        winW - rightW, 0.f, rightW, winH, m_font);
+
+    for (const auto& marker : m_markers.all()) {
+        if (std::string(marker->type()) == "loot") {
+            auto lm = std::dynamic_pointer_cast<LootMarker>(marker);
+            if (lm)
+                m_filterPanel->addLootContainer(
+                    std::make_shared<LootContainer>(lm->container()));
+        }
+    }
 
     std::size_t lootCount = countIf<MapMarker>(m_markers,
         [](const MapMarker& m){ return std::string(m.type()) == "loot"; });
@@ -89,10 +98,12 @@ void App::handleEvents()
 
         if (event.type == sf::Event::MouseButtonPressed &&
             event.mouseButton.button == sf::Mouse::Left)
-            m_mapView->onMousePressed({
-                static_cast<float>(event.mouseButton.x),
-                static_cast<float>(event.mouseButton.y)
-            });
+        {
+            sf::Vector2f pos(static_cast<float>(event.mouseButton.x),
+                             static_cast<float>(event.mouseButton.y));
+            if (!m_filterPanel->contains(pos))
+                m_mapView->onMousePressed(pos);
+        }
 
         if (event.type == sf::Event::MouseMoved)
             m_mapView->onMouseMoved({
@@ -115,22 +126,27 @@ void App::handleEvents()
                 static_cast<float>(event.mouseButton.x),
                 static_cast<float>(event.mouseButton.y)
             );
-            m_mapView->onMouseReleased(releasePos);
 
-            if (!m_mapView->wasDragOnRelease())
-            {
-                sf::Vector2f mapPos = m_mapView->screenToMap(releasePos);
-                auto hit = findFirst<MapMarker>(m_markers,
-                    [&](const MapMarker& m){ return m.contains(mapPos); });
-                if (hit) {
-                    m_selectedMarker = hit;
-                    std::cout << "Clicked: " << hit->type()
-                              << " at (" << std::fixed << std::setprecision(0)
-                              << hit->position().x << ", " << hit->position().y << ")\n";
-                } else {
-                    m_selectedMarker.reset();
-                    std::cout << "  { \"type\": \"loot\", \"x\": " << std::fixed << std::setprecision(0)
-                              << mapPos.x << ", \"y\": " << mapPos.y << ", \"kind\": \"\" },\n";
+            if (m_filterPanel->contains(releasePos)) {
+                m_filterPanel->handleClick(releasePos);
+            } else {
+                m_mapView->onMouseReleased(releasePos);
+
+                if (!m_mapView->wasDragOnRelease())
+                {
+                    sf::Vector2f mapPos = m_mapView->screenToMap(releasePos);
+                    auto hit = findFirst<MapMarker>(m_markers,
+                        [&](const MapMarker& m){ return m.contains(mapPos); });
+                    if (hit) {
+                        m_selectedMarker = hit;
+                        std::cout << "Clicked: " << hit->type()
+                                  << " at (" << std::fixed << std::setprecision(0)
+                                  << hit->position().x << ", " << hit->position().y << ")\n";
+                    } else {
+                        m_selectedMarker.reset();
+                        std::cout << "  { \"type\": \"loot\", \"x\": " << std::fixed << std::setprecision(0)
+                                  << mapPos.x << ", \"y\": " << mapPos.y << ", \"kind\": \"\" },\n";
+                    }
                 }
             }
         }
@@ -144,6 +160,11 @@ void App::render()
     for (const auto& marker : m_markers.all())
     {
         if (!marker->visible()) continue;
+        if (!m_filterPanel->isTypeVisible(marker->type())) continue;
+        if (std::string(marker->type()) == "loot") {
+            auto lm = std::dynamic_pointer_cast<LootMarker>(marker);
+            if (lm && !m_filterPanel->isKindVisible(lm->container().kind())) continue;
+        }
         sf::Vector2f screenPos = m_mapView->mapToScreen(marker->position());
         if (selected && marker == selected) {
             float r = marker->drawRadius() + 7.f;
@@ -158,7 +179,7 @@ void App::render()
         marker->draw(m_window, screenPos);
     }
     m_window.draw(m_leftPanel);
-    m_window.draw(m_rightPanel);
+    m_filterPanel->draw(m_window);
 
     if (auto selected = m_selectedMarker.lock()) {
         const float padding = 14.f;

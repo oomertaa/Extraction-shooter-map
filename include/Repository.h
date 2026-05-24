@@ -23,6 +23,8 @@ public:
             m_items.push_back(factory(entry));
     }
 
+    void add(std::shared_ptr<T> item) { m_items.push_back(std::move(item)); }
+
     const std::vector<std::shared_ptr<T>>& all() const { return m_items; }
     std::size_t size() const { return m_items.size(); }
 

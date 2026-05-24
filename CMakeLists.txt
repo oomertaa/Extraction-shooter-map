@@ -17,6 +17,7 @@ add_executable(ZeroDamMap
     src/ExtractionMarker.cpp
     src/BossMarker.cpp
     src/MarkerFactory.cpp
+    src/FilterPanel.cpp
 )
 target_include_directories(ZeroDamMap PRIVATE include)
 target_compile_options(ZeroDamMap PRIVATE -Wall -Wextra -Wpedantic)
